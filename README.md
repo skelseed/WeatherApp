@@ -5,6 +5,7 @@ Aplicacion Angular que muestra la temperatura actual de Temuco, Chile mediante l
 ## Inicio rapido
 
 ```bash
+npm install
 npm start
 ```
 
