@@ -1,59 +1,73 @@
 # WeatherApp
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.22.
+Aplicacion Angular que muestra la temperatura actual de Temuco, Chile mediante la API de Open-Meteo.
 
-## Development server
-
-To start a local development server, run:
+## Inicio rapido
 
 ```bash
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abrir http://localhost:8080
 
-## Code scaffolding
+El puerto por defecto es 8080.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Compilacion para produccion
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Salida en dist/weatherapp/
 
-## Running unit tests
+## Despliegue en GitHub Pages
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+La carpeta docs/ contiene una version en HTML puro que no requiere compilacion.
 
-```bash
-ng test
+1. Subir el repositorio a GitHub
+2. Ir a Settings > Pages
+3. Fuente: Deploy from a branch
+4. Seleccionar rama main y carpeta /docs
+5. El sitio estara disponible en https://usuario.github.io/WeatherApp
+
+## Archivos a eliminar de una instalacion normal ng new
+
+Al ejecutar ng new WeatherApp, Angular CLI genera archivos adicionales. Conservar unicamente:
+
+```
+WeatherApp/
+  angular.json
+  package.json
+  tsconfig.json
+  tsconfig.app.json
+  README.md
+  CASOS_LIMITE.md
+  docs/
+    index.html
+  src/
+    index.html
+    main.ts
+    styles.css
+    app/
+      app.component.ts
+      app.config.ts
+      weather.service.ts
+      weather/
+        weather.component.ts
 ```
 
-## Running end-to-end tests
+Eliminar:
+- src/favicon.ico
+- src/assets/
+- src/app/app.routes.ts
+- src/app/app.component.spec.ts
+- src/app/app.component.css
+- karma.conf.js
+- .editorconfig
+- .vscode/
 
-For end-to-end (e2e) testing, run:
+## APIs utilizadas
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Geocodificacion: https://geocoding-api.open-meteo.com/v1/search?name=Temuco&count=1&language=es&format=json
+2. Clima: https://api.open-meteo.com/v1/forecast?latitude=-38.7363&longitude=-72.5974&current=temperature_2m&timezone=America/Santiago

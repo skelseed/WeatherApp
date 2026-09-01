@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temuco, Chile - Clima</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 { margin: 0 0 4px 0; color: #1a202c; font-size: 1.8rem; }
+    .subtitle { margin: 0 0 24px 0; color: #718096; font-size: 0.95rem; }
+    .status { padding: 20px; color: #4a5568; }
+    .status.error { color: #c53030; }
+    .status.error button {
+      margin-top: 12px; padding: 8px 20px;
+      background: #3182ce; color: white; border: none;
+      border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+    }
+    .status.error button:hover { background: #2b6cb0; }
+    .temp { margin: 20px 0; }
+    .number { font-size: 4rem; font-weight: bold; color: #2d3748; }
+    .symbol { font-size: 1.5rem; color: #718096; margin-left: 4px; }
+    .info {
+      text-align: left; margin-top: 20px;
+      padding-top: 16px; border-top: 1px solid #e2e8f0;
+    }
+    .info p { margin: 6px 0; color: #4a5568; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Temuco, Chile</h1>
+    <p class="subtitle">Región de la Araucanía</p>
+    <div id="loading" class="status"><p>Cargando datos del clima...</p></div>
+    <div id="error" class="status error" style="display:none;">
+      <p id="errMsg"></p>
+      <button onclick="loadWeather()">Reintentar</button>
+    </div>
+    <div id="result" style="display:none;">
+      <div class="temp">
+        <span class="number" id="tempNum"></span>
+        <span class="symbol" id="tempUnit"></span>
+      </div>
+      <div class="info" id="info"></div>
+    </div>
+  </div>
+  <script>
+    async function loadWeather() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      try {
+        const geoRes = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=Temuco&count=1&language=es&format=json');
+        if (!geoRes.ok) throw new Error('Error en geocodificacion: ' + geoRes.status);
+        const geoData = await geoRes.json();
+        if (!geoData.results || geoData.results.length === 0) throw new Error('No se encontro Temuco');
+        const loc = geoData.results[0];
+        const wRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude + '&current=temperature_2m&timezone=America/Santiago');
+        if (!wRes.ok) throw new Error('Error en clima: ' + wRes.status);
+        const wData = await wRes.json();
+        document.getElementById('tempNum').textContent = wData.current.temperature_2m;
+        document.getElementById('tempUnit').textContent = wData.current_units.temperature_2m;
+        document.getElementById('info').innerHTML =
+          '<p><strong>Comuna:</strong> ' + loc.admin3 + '</p>' +
+          '<p><strong>Provincia:</strong> ' + loc.admin2 + '</p>' +
+          '<p><strong>Poblacion:</strong> ' + loc.population.toLocaleString() + '</p>' +
+          '<p><strong>Elevacion:</strong> ' + loc.elevation + ' m</p>' +
+          '<p><strong>Zona horaria:</strong> ' + loc.timezone + '</p>';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+      } catch (e) {
+        document.getElementById('errMsg').textContent = 'Error: ' + e.message;
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+    loadWeather();
+  </script>
+</body>
+</html>
